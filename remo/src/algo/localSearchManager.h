@@ -15,7 +15,7 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with Foobar.  If not, see <http://www.gnu.org/licenses/>
+    along with blackboxParadisEO.  If not, see <http://www.gnu.org/licenses/>
 */ 
 
 /**
@@ -23,6 +23,7 @@
  * 
  * @author: Atiyah Elsheikh
  * @date: Oct. 2014
+ * last changes : Jan. 2015
  */ 
 
 
@@ -157,7 +158,8 @@ protected:
   NeighborEval neighborEval; 
 
   /// The local search 
-  LocalSearch* ls; 
+  //LocalSearch* ls; 
+  moLocalSearch<Neighbor>* ls;
 
   /// Maximum num. iteration 
   MaxNumIter maxiter; 
@@ -207,12 +209,12 @@ template<class LocalSearch,class eoObjFunc>
   /// Initialize the object
   virtual void initLS() {
     if(!this->initialized) {
-      /*  if(typeid(LocalSearch) == typeid(TabuSearch)) { // does not compile for tabu search, because it does not have adequate constructor with 3 arguments ... 
-	this->ls = new TabuSearch (this->neighborhood,this->eval,this->neighborEval,3,1000);
+      if(typeid(LocalSearch) == typeid(TabuSearch)) { // does not compile for tabu search, because it does not have adequate constructor with 3 arguments ... 
+	this->ls = new TabuSearch (this->neighborhood,this->eval,this->neighborEval,3,10);
       }
-      else {*/ 
-      this->ls = new LocalSearch(this->neighborhood,this->eval,this->neighborEval);
-      //}
+      else { 
+	this->ls = new LocalSearch(this->neighborhood,this->eval,this->neighborEval);
+      }
     }
   }
 
@@ -238,21 +240,39 @@ public:
    * @param _boundaryRadius neighborhood boundary radius 
    * @param _maxiter maximum number of iteration
    */  
- LocalSearchManagerTS(const EORVT& _initial,
+  LocalSearchManagerTS(const EORVT& _initial,
 		      uint32_t _numNeighbors=50,double _boundaryRadius=0.1,
-		      unsigned int _maxiter = getMaxUnsignedInt()) : BaseLocalSearchManager<moTS<Neighbor>,eoObjFunc>(_initial,_numNeighbors,_boundaryRadius,_maxiter) { }
+		       unsigned int _maxiter = getMaxUnsignedInt()) : BaseLocalSearchManager<TabuSearch,eoObjFunc>(_initial,_numNeighbors,_boundaryRadius,_maxiter),time(3),tabuListSize(1000) { }
 
   /// Initialize the object
   virtual void initLS() {
     if(!this->initialized) {
-      this->ls = new TabuSearch (this->neighborhood,this->eval,this->neighborEval,3,1000);
+      this->ls = new TabuSearch (this->neighborhood,this->eval,this->neighborEval,time,tabuListSize);
     }
   }
 
-  
+  /**
+   * set Time limit 
+   */ 
+  void setTimeLimit(unsigned int _time) {
+    time = _time;
+  }
+
+  /**
+   * set Time limit 
+   */ 
+  void setTabuListSize(unsigned int _tabuListSize) {
+    tabuListSize = _tabuListSize;
+  }
+
  protected:
   
+  /** time limit of for stopping criteria */ 
+  unsigned int time; 
 
+  /** tabu list size of the tabu list*/ 
+  unsigned int tabuListSize;
+ 
 };
 
 #endif

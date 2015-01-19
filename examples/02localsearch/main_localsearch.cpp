@@ -15,7 +15,7 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with Foobar.  If not, see <http://www.gnu.org/licenses/>
+    along with blackboxParadisEO.  If not, see <http://www.gnu.org/licenses/>
 */ 
 
 /**
@@ -79,7 +79,7 @@ void main_function(int argc, char **argv)
    * ========================================================= */
  
     LocalSearchManager<SimpleHillClimbing,ObjFunc> simpleHC(initialSolution); 
-    simpleHC.init(20000);
+    simpleHC.init(200000);
     simpleHC.run();
     simpleHC.printOn();
 
@@ -111,11 +111,21 @@ void main_function(int argc, char **argv)
      *
      * ========================================================= */
    
-    LocalSearchManagerTS<ObjFunc> TS(initialSolution,10000);
+
+    LocalSearchManagerTS<ObjFunc> TS(initialSolution,50,0.1,10000);
+    TS.setTimeLimit(1);
+    TS.setTabuListSize(100);
     TS.init();
     TS.run();
     TS.printOn();
    
+    /// OR 
+
+    LocalSearchManager<TabuSearch,ObjFunc> TS2(initialSolution); 
+    TS2.init(2000000);
+    TS2.run();
+    TS2.printOn();
+
 }
 
 
