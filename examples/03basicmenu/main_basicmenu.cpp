@@ -15,7 +15,7 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with Foobar.  If not, see <http://www.gnu.org/licenses/>
+    along with blackboxParadisEO.  If not, see <http://www.gnu.org/licenses/>
 */ 
 
 /**
@@ -55,11 +55,11 @@ typedef Rosenbrock ObjFunc;
 void main_function(int argc, char **argv)
 {
 
-   LocalSearchBasicMenu<SimpleHillClimbing,ObjFunc> menu(argc,argv);
-
-   // LocalSearchBasicMenu<FirstImprHillClimbing,ObjFunc> menu2(argc,argv);
-   // LocalSearchBasicMenu<SimulatedAnnealing,ObjFunc> menu3(argc,argv);
-   // LocalSearchBasicMenu<TabuSearch,ObjFunc> menu4(argc,argv); does not work at the moment
+  
+  // LocalSearchBasicMenu<SimpleHillClimbing,ObjFunc> menu(argc,argv);
+  // LocalSearchBasicMenu<FirstImprHillClimbing,ObjFunc> menu2(argc,argv);
+  // LocalSearchBasicMenu<SimulatedAnnealing,ObjFunc> menu3(argc,argv);
+  LocalSearchBasicMenu<TabuSearch,ObjFunc> menu4(argc,argv); //does not work at the moment
 
 }
 
