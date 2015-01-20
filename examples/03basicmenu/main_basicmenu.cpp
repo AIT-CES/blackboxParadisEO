@@ -58,8 +58,8 @@ void main_function(int argc, char **argv)
   
   // LocalSearchBasicMenu<SimpleHillClimbing,ObjFunc> menu(argc,argv);
   // LocalSearchBasicMenu<FirstImprHillClimbing,ObjFunc> menu2(argc,argv);
-  // LocalSearchBasicMenu<SimulatedAnnealing,ObjFunc> menu3(argc,argv);
-  LocalSearchBasicMenu<TabuSearch,ObjFunc> menu4(argc,argv); //does not work at the moment
+  LocalSearchBasicMenu<SimulatedAnnealing,ObjFunc> menu3(argc,argv);
+  // LocalSearchBasicMenu<TabuSearch,ObjFunc> menu4(argc,argv); //does not work at the moment
 
 }
 

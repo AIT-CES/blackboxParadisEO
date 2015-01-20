@@ -228,7 +228,7 @@ template<class LocalSearch,class eoObjFunc>
  * Local search Manager for TabuSearch 
  */ 
 template<class eoObjFunc>
-class LocalSearchManagerTS: public BaseLocalSearchManager<TabuSearch,eoObjFunc> {
+class LocalSearchManagerTS: public LocalSearchManager<TabuSearch,eoObjFunc> {
 
 public:
 
@@ -242,7 +242,7 @@ public:
    */  
   LocalSearchManagerTS(const EORVT& _initial,
 		      uint32_t _numNeighbors=50,double _boundaryRadius=0.1,
-		       unsigned int _maxiter = getMaxUnsignedInt()) : BaseLocalSearchManager<TabuSearch,eoObjFunc>(_initial,_numNeighbors,_boundaryRadius,_maxiter),time(3),tabuListSize(1000) { }
+		       unsigned int _maxiter = getMaxUnsignedInt()) : LocalSearchManager<TabuSearch,eoObjFunc>(_initial,_numNeighbors,_boundaryRadius,_maxiter),time(3),tabuListSize(1000) { }
 
   /// Initialize the object
   virtual void initLS() {
@@ -274,5 +274,82 @@ public:
   unsigned int tabuListSize;
  
 };
+
+
+/** 
+ * \class LocalSearchManagerTS 
+ * 
+ * Local search Manager for TabuSearch 
+ */ 
+template<class eoObjFunc>
+class LocalSearchManagerSA: public LocalSearchManager<SimulatedAnnealing,eoObjFunc> {
+
+public:
+
+  /**
+   * default Constructor
+   * 
+   * @param _initial initial solution
+   * @param _numNeighbors number of neighbors 
+   * @param _boundaryRadius neighborhood boundary radius 
+   * @param _maxiter maximum number of iteration
+   */  
+  LocalSearchManagerSA(const EORVT& _initial,
+		       uint32_t _numNeighbors=50,double _boundaryRadius=0.1,
+		       unsigned int _maxiter = getMaxUnsignedInt()) : LocalSearchManager<SimulatedAnnealing,eoObjFunc>(_initial,_numNeighbors,_boundaryRadius,_maxiter),initT(10),alpha(0.9),span(100),finalT(0.01) { }
+
+  /// Initialize the object
+  virtual void initLS() {
+    if(!this->initialized) {
+      this->ls = new SimulatedAnnealing(this->neighborhood,this->eval,this->neighborEval,initT,alpha,span,finalT);
+    }
+  }
+
+  /**
+   * set initial temperature of cooling schedule 
+   */ 
+  void setInitTemp(double _initT) {
+    initT = _initT;
+  }
+
+  /**
+   * set factor of decreasing for cooling schedule
+   */ 
+  void setAlpha(double _alpha) {
+    alpha = _alpha;
+  }
+
+  /**
+   * set number of iteration with equal temperature for cooling schedule 
+   */
+  void setSpan(unsigned _span) {
+    span = _span; 
+  }
+
+  /**
+   * set final temperature 
+   */
+  void setFinalTemp(double _finalT) {
+    finalT = _finalT;
+  }
+
+
+ protected:
+
+  /** initial temperature for cooling schedule */
+  double initT;
+  
+  /** factor of decreasing for cooling schedule*/
+  double alpha;
+  
+  /** number of iteration with equal temperature for cooling schedule */
+  unsigned span;
+  
+  /** final temperature*/ 
+  double finalT;
+  
+};
+
+
 
 #endif

@@ -137,7 +137,8 @@ template<class LocalSearch, class eoObjFunc>
     const char* LSMENU   = "Local Search General";
     const char* TSMENU   = "Tabu Search";
     const char* SCMENU   = "Stopping Criteria";
-    
+    const char* SAMENU   = "Simulated Annealing";
+
     // execute the local search
     bool execute  = processFlag<bool>(false,"execute","Execute the local search",'E');
 
@@ -186,6 +187,11 @@ template<class LocalSearch, class eoObjFunc>
     uint32_t tabuListSize = 1000;
     uint32_t timeLimit = 3;
 
+    double initT = 10.0; 
+    double alpha = 0.9;
+    unsigned span = 100; 
+    double finalT = 0.01;
+
     eoRealVectorBounds& temp = boundsParam.value();
     eoRealVectorBounds bounds;
     bounds.resize(temp.size());
@@ -211,6 +217,17 @@ template<class LocalSearch, class eoObjFunc>
       tabuListSize = processFlag<uint32_t>(tabuListSize, "tabuListSize", "tabu list size", 'L',false,TSMENU);
       ((LocalSearchManagerTS<eoObjFunc>*) manager)->setTimeLimit(timeLimit);
       ((LocalSearchManagerTS<eoObjFunc>*) manager)->setTabuListSize(tabuListSize);
+    } 
+    else if(typeid(LocalSearch) == typeid(SimulatedAnnealing)) {
+      manager = (BaseLocalSearchManager<LocalSearch,eoObjFunc> *) new LocalSearchManagerSA<eoObjFunc>(initialSolution,numNeighbors,boundaryRadius,maxiter);
+      initT = processFlag<double>(initT, "initTemp", "initial temperature", 'I',false,SAMENU);
+      alpha = processFlag<double>(alpha, "alpha", "factor of decreasing for cooling schedule", 'A',false,SAMENU);
+      span = processFlag<unsigned>(span, "span", "number of iteration with equal temperature", 'S',false,SAMENU);
+      finalT = processFlag<double>(finalT, "finalTemp", "final temperature", 'F',false,SAMENU);
+      ((LocalSearchManagerSA<eoObjFunc>*) manager)->setInitTemp(initT);
+      ((LocalSearchManagerSA<eoObjFunc>*) manager)->setAlpha(alpha);
+      ((LocalSearchManagerSA<eoObjFunc>*) manager)->setSpan(span);
+      ((LocalSearchManagerSA<eoObjFunc>*) manager)->setFinalTemp(finalT);
     }
     else {
       manager = new LocalSearchManager<LocalSearch,eoObjFunc>(initialSolution,numNeighbors,boundaryRadius);

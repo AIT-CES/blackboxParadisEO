@@ -104,6 +104,14 @@ void main_function(int argc, char **argv)
     SA.init();
     SA.run();
     SA.printOn();
+
+    // OR 
+
+    LocalSearchManagerSA<ObjFunc> SA2(initialSolution); 
+    SA2.init(100000);
+    SA2.run();
+    SA2.printOn();
+
    
     /* =========================================================
      *
