@@ -279,7 +279,7 @@ public:
 /** 
  * \class LocalSearchManagerTS 
  * 
- * Local search Manager for TabuSearch 
+ * Local search Manager for Simulated Annealing
  */ 
 template<class eoObjFunc>
 class LocalSearchManagerSA: public LocalSearchManager<SimulatedAnnealing,eoObjFunc> {
