@@ -49,16 +49,15 @@ class eoEvalFuncPtr<EOT,Fit,FArg> {
 */ 
 /**
  * \class eoObjFunc a generic class for prototyping objective functions 
- * 
  */
 template<class EOT,class Fitness = typename EOT::Fitness, class FuncArg = const EOT&> 
 class eoObjFunc : public eoEvalFunc<EOT> {
 
 public:
-  virtual Fitness eval(FuncArg) = 0; 
+  virtual void operator()(EOT& _eo) = 0;
 
 protected:
-  virtual void operator()(EOT& _eo) = 0;
+  virtual Fitness eval(FuncArg) = 0; 
 
 };  
 
@@ -69,15 +68,15 @@ protected:
  */ 
 class RSRRMVOF : public eoObjFunc<EORVT,double,const std::vector<double>&> {
   
-  //virtual double eval(const std::vector<double>& arg) = 0; 
-
 public:
 
-protected:
   virtual void operator()(EORVT& _eo) {
     const std::vector<double>& v = (std::vector<double>)( _eo);
     _eo.fitness(this->eval(v));
   };
+
+protected:
+  //virtual double eval(const std::vector<double>& arg) = 0; 
 
 };
 
