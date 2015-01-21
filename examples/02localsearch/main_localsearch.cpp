@@ -39,15 +39,15 @@ using namespace std;
 #include "remo/src/algo/localSearchManager.h"
 
 // objective functions 
-//#include "objfunc/simple/SimpleObj.h"
+#include "objfunc/simple/SimpleObj.h"
 //#include "objfunc/griewank/Griewank.h"
 //#include "objfunc/rastrigin/Rastrigin.h"
-#include "objfunc/rosenbrock/Rosenbrock.h"
+//#include "objfunc/rosenbrock/Rosenbrock.h"
 
-//typedef SimpleObj ObjFunc;
+typedef SimpleObj ObjFunc;
 //typedef Griewank ObjFunc;
 //typedef Rastrigin ObjFunc;
-typedef Rosenbrock ObjFunc;
+//typedef Rosenbrock ObjFunc;
 
 // include for solution initialization
 #include "util/Utilities.h"
