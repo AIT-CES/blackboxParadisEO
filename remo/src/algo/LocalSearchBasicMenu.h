@@ -169,9 +169,6 @@ template<class LocalSearch, class eoObjFunc>
     string str_status = _filename + ".status"; 
     string statusParam = processFlag<string>(str_status,"status","Status file",'F',false,"Persistence");
 
-    /*eoValueParam<string> statusParam(str_status.c_str(), "status", "Status file");
-      parser.processParam( statusParam, "Persistence" );*/
-    
     // @todo boundaryRadius
     /*  
      stopping conditions:
@@ -202,24 +199,21 @@ template<class LocalSearch, class eoObjFunc>
     rng.reseed(seed);
 
     // initalSolution
-    EORVT initialSolution; 
+    //EORVT initialSolution; 
 
     vector<double> lowBounds,uppBounds; 
     Utilities::getBounds(bounds,lowBounds,uppBounds);
-    Utilities::getRandomSolution(initialSolution,lowBounds,uppBounds);    
-    cout << "Initial solution : \n"; 
-    initialSolution.printOn(cout);
-   
+    
     // @todo check if type is TabuSearch, does not work for TS 
     if(typeid(LocalSearch) == typeid(TabuSearch)) {
-      manager = (BaseLocalSearchManager<LocalSearch,eoObjFunc> *) new LocalSearchManagerTS<eoObjFunc>(initialSolution,numNeighbors,boundaryRadius,maxiter);
+      manager = (BaseLocalSearchManager<LocalSearch,eoObjFunc> *) new LocalSearchManagerTS<eoObjFunc>(lowBounds,uppBounds,numNeighbors,boundaryRadius,maxiter);
       timeLimit = processFlag<uint32_t>(timeLimit, "timeLimit", "time limit", 'T',false,TSMENU);
       tabuListSize = processFlag<uint32_t>(tabuListSize, "tabuListSize", "tabu list size", 'L',false,TSMENU);
       ((LocalSearchManagerTS<eoObjFunc>*) manager)->setTimeLimit(timeLimit);
       ((LocalSearchManagerTS<eoObjFunc>*) manager)->setTabuListSize(tabuListSize);
     } 
     else if(typeid(LocalSearch) == typeid(SimulatedAnnealing)) {
-      manager = (BaseLocalSearchManager<LocalSearch,eoObjFunc> *) new LocalSearchManagerSA<eoObjFunc>(initialSolution,numNeighbors,boundaryRadius,maxiter);
+      manager = (BaseLocalSearchManager<LocalSearch,eoObjFunc> *) new LocalSearchManagerSA<eoObjFunc>(lowBounds,uppBounds,numNeighbors,boundaryRadius,maxiter);
       initT = processFlag<double>(initT, "initTemp", "initial temperature", 'I',false,SAMENU);
       alpha = processFlag<double>(alpha, "alpha", "factor of decreasing for cooling schedule", 'A',false,SAMENU);
       span = processFlag<unsigned>(span, "span", "number of iteration with equal temperature", 'S',false,SAMENU);
@@ -230,7 +224,7 @@ template<class LocalSearch, class eoObjFunc>
       ((LocalSearchManagerSA<eoObjFunc>*) manager)->setFinalTemp(finalT);
     }
     else {
-      manager = new LocalSearchManager<LocalSearch,eoObjFunc>(initialSolution,numNeighbors,boundaryRadius);
+      manager = new LocalSearchManager<LocalSearch,eoObjFunc>(lowBounds,uppBounds,numNeighbors,boundaryRadius);
     }
     
     if (parser.userNeedsHelp()) {
@@ -243,6 +237,10 @@ template<class LocalSearch, class eoObjFunc>
       os << parser;// and you can use that file as parameter file
     }
     
+    cout << "Initial solution : \n"; 
+    EORVT solution = manager->getSolution(); 
+    solution.printOn(cout);
+
     if(execute) {
       manager->init(maxeval);
       manager->run();

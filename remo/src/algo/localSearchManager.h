@@ -36,7 +36,7 @@
 #include <ostream>    
 #include <limits>
 #include "remo/moRealTypes.h"
-
+#include "util/Utilities.h"
 
 /**
  * max value of unsigned integer
@@ -69,6 +69,22 @@ public:
  BaseLocalSearchManager(const EORVT& _initial,uint32_t _numNeighbors,double _boundaryRadius,unsigned int _maxiter=getMaxUnsignedInt()) 
    : ls(0),solution(_initial),mainEval(),eval(mainEval),neighborEval(eval),neighborhood(_numNeighbors,_boundaryRadius),initialized(false),maxiter(_maxiter),sc(maxiter),maxeval(0) { } 
 
+
+ /**
+   * default Constructor
+   * 
+   * @param _lowerBound  lower bounds of initial solution
+   * @param _upperBound  upper bounds of initial solution
+   * @param _numNeighbors number of neighbors 
+   * @param _boundaryRadius neighborhood boundary radius 
+   * @param _maxiter maximum number of iteration
+   */ 
+ BaseLocalSearchManager(const vector<double>& _lowerBound,const vector<double>& _upperBound,uint32_t _numNeighbors,double _boundaryRadius,unsigned int _maxiter=getMaxUnsignedInt()) 
+   : ls(0),mainEval(),eval(mainEval),neighborEval(eval),neighborhood(_numNeighbors,_boundaryRadius),initialized(false),maxiter(_maxiter),sc(maxiter),maxeval(0) { 
+    Utilities::getRandomSolution(solution,_lowerBound,_upperBound);
+} 
+
+
   /// Destructor 
   virtual ~BaseLocalSearchManager() 
   { 
@@ -77,7 +93,7 @@ public:
       delete maxeval;
     }
     catch (int e) {
-      std::cerr << "exception at Destructor of LocalSearchManager : Nr. " << e << std::endl;
+      std::cerr << "exception at Destructor of BaseLocalSearchManager : Nr. " << e << std::endl;
       std::abort();
     }
   }
@@ -133,6 +149,13 @@ public:
       return std::string("");
   }
 
+  /**
+   * return solution
+   */ 
+  EORVT getSolution(){
+    if(solution.invalid()) eval(solution);
+    return solution;
+  }
 
 protected:
  
@@ -206,10 +229,21 @@ template<class LocalSearch,class eoObjFunc>
 		    unsigned int _maxiter = getMaxUnsignedInt()
 		    ) : BaseLocalSearchManager<LocalSearch,eoObjFunc>(_initial,_numNeighbors,_boundaryRadius,_maxiter) {}
 
+  /**
+   * default Constructor
+   * 
+   * @param _lowerBound  lower bounds of initial solution
+   * @param _upperBound  upper bounds of initial solution
+   * @param _numNeighbors number of neighbors 
+   * @param _boundaryRadius neighborhood boundary radius 
+   * @param _maxiter maximum number of iteration
+   */ 
+ LocalSearchManager(const vector<double>& _lowerBound,const vector<double>& _upperBound,uint32_t _numNeighbors,double _boundaryRadius,unsigned int _maxiter=getMaxUnsignedInt()) : BaseLocalSearchManager<LocalSearch,eoObjFunc>(_lowerBound,_upperBound,_numNeighbors,_boundaryRadius,_maxiter) {}
+
   /// Initialize the object
   virtual void initLS() {
     if(!this->initialized) {
-      if(typeid(LocalSearch) == typeid(TabuSearch)) { // does not compile for tabu search, because it does not have adequate constructor with 3 arguments ... 
+      if(typeid(LocalSearch) == typeid(TabuSearch)) { 
 	this->ls = new TabuSearch (this->neighborhood,this->eval,this->neighborEval,3,10);
       }
       else { 
@@ -241,8 +275,20 @@ public:
    * @param _maxiter maximum number of iteration
    */  
   LocalSearchManagerTS(const EORVT& _initial,
-		      uint32_t _numNeighbors=50,double _boundaryRadius=0.1,
+		       uint32_t _numNeighbors=50,double _boundaryRadius=0.1,
 		       unsigned int _maxiter = getMaxUnsignedInt()) : LocalSearchManager<TabuSearch,eoObjFunc>(_initial,_numNeighbors,_boundaryRadius,_maxiter),time(3),tabuListSize(1000) { }
+
+  /**
+   * default Constructor
+   * 
+   * @param _lowerBound  lower bounds of initial solution
+   * @param _upperBound  upper bounds of initial solution
+   * @param _numNeighbors number of neighbors 
+   * @param _boundaryRadius neighborhood boundary radius 
+   * @param _maxiter maximum number of iteration
+   */ 
+ LocalSearchManagerTS(const vector<double>& _lowerBound,const vector<double>& _upperBound,uint32_t _numNeighbors,double _boundaryRadius,unsigned int _maxiter=getMaxUnsignedInt()) : LocalSearchManager<TabuSearch,eoObjFunc>(_lowerBound,_upperBound,_numNeighbors,_boundaryRadius,_maxiter) {}
+
 
   /// Initialize the object
   virtual void initLS() {
@@ -297,6 +343,18 @@ public:
   LocalSearchManagerSA(const EORVT& _initial,
 		       uint32_t _numNeighbors=50,double _boundaryRadius=0.1,
 		       unsigned int _maxiter = getMaxUnsignedInt()) : LocalSearchManager<SimulatedAnnealing,eoObjFunc>(_initial,_numNeighbors,_boundaryRadius,_maxiter),initT(10),alpha(0.9),span(100),finalT(0.01) { }
+
+ /**
+   * default Constructor
+   * 
+   * @param _lowerBound  lower bounds of initial solution
+   * @param _upperBound  upper bounds of initial solution
+   * @param _numNeighbors number of neighbors 
+   * @param _boundaryRadius neighborhood boundary radius 
+   * @param _maxiter maximum number of iteration
+   */ 
+ LocalSearchManagerSA(const vector<double>& _lowerBound,const vector<double>& _upperBound,uint32_t _numNeighbors,double _boundaryRadius,unsigned int _maxiter=getMaxUnsignedInt()) : LocalSearchManager<SimulatedAnnealing,eoObjFunc>(_lowerBound,_upperBound,_numNeighbors,_boundaryRadius,_maxiter) {}
+
 
   /// Initialize the object
   virtual void initLS() {
