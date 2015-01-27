@@ -1,0 +1,67 @@
+CC=g++
+PRE=time
+PARADISEOVER=2.0.1
+PARADISEOHOME=/usr/local/include/paradiseo
+PARADISEOHOME=/cygdrive/d/work/software/paradiseo
+MYPARADISEO=/cygdrive/d/work/blackboxParadisEO/
+DBGPH=-dbg
+
+help:
+	@echo "Targets"
+	@echo "======="
+	@echo ""
+	@echo "	build:		build exe without debuging"
+	@echo "	run:		run"
+	@echo "	clean:		clean all objects"
+	@echo ""
+
+
+##Compiler Flags 
+DBFLAGS=-g 
+MACROS=
+DBGMACROS=-DDEBUG
+CFLAGS=
+OPTFLAGS=-O
+
+
+INCEO=/usr/local/include/paradiseo/eo
+INCMO=/usr/local/include/paradiseo/mo 
+INC=-I. -I$(INCEO) -I$(INCMO) -I$(MYPARADISEO)
+
+LDLIBS=-L$(PARADISEOHOME)/build/lib/
+LDFLAGS=$(LDLIBS) -leoutils -leo
+
+##Executables
+EXE=main.exe
+EXEDBG=main$(DBGPH).exe
+
+## Object files and src codes 
+SRC=main_population.cpp
+OBJECTS=${SRC:.cpp=.o}
+OBJECTSDBG=${SRC:.cpp=.o}
+
+
+## Compile Targets  
+build:$(EXE)
+
+
+builddbg:$(EXEDBG)
+
+$(EXE):$(OBJECTS)
+	$(CC) -o $(EXE) $(OBJECTS) $(LDFLAGS) 
+
+$(EXEDBG):$(OBJECTSDBG)
+	$(CC) -o $(EXE) $(OBJECTSDBG) $(LDFLAGS) 
+
+#Objects
+.cpp.o:
+	$(CC) -c $(CFLAGS) $(OPTFLAGS) $(INC) $<
+
+run:
+	$(PRE) $(MPIRUN) $(CLUSTERFLAGS) -np $(NPROC)  $(EXEHOME)/$(EXEPAR)  $(NJOBS)
+
+depend:
+	makedepend -- $(SRC)
+
+clean:
+	rm -f *.exe *.o
