@@ -135,7 +135,10 @@ template<class LocalSearch, class eoObjFunc>
     
     const char* FUNCMENU = "Goal Function";
     const char* LSMENU   = "Local Search General";
-    
+    const char* TSMENU   = "Tabu Search";
+    const char* SCMENU   = "Stopping Criteria";
+    const char* SAMENU   = "Simulated Annealing";
+
     // execute the local search
     bool execute  = processFlag<bool>(false,"execute","Execute the local search",'E');
 
@@ -148,7 +151,7 @@ template<class LocalSearch, class eoObjFunc>
     
     // boundaries box 
     eoValueParam<eoRealVectorBounds> boundsParam(
-                         eoRealVectorBounds(N, -100, 100),
+			 eoRealVectorBounds(N, -100, 100),
 			 "initBounds",
 			 "Bounds for initialization (MUST be bounded)",
 			 'B');
@@ -158,13 +161,14 @@ template<class LocalSearch, class eoObjFunc>
     uint32_t numNeighbors = processFlag<uint32_t>(50, "numneighbors", "Num. of neighbors", 'G',false,LSMENU);
 
     double boundaryRadius = processFlag<double>(0.1,"boundaryradius", "The radious of the neighborhood",'R',false,LSMENU);
+
+    uint32_t maxiter = processFlag<uint32_t>(1000,"maxiter","max. number of iterations",'i',false,SCMENU);
+
+    uint32_t maxeval = processFlag<uint32_t>(10000,"maxeval","max. number of function's evaluations",'e',false,SCMENU);
     
     string str_status = _filename + ".status"; 
     string statusParam = processFlag<string>(str_status,"status","Status file",'F',false,"Persistence");
 
-    /*eoValueParam<string> statusParam(str_status.c_str(), "status", "Status file");
-      parser.processParam( statusParam, "Persistence" );*/
-    
     // @todo boundaryRadius
     /*  
      stopping conditions:
@@ -176,6 +180,52 @@ template<class LocalSearch, class eoObjFunc>
     */
     // see make_continue.h
     // the name of the "status" file where all actual parameter values will be saved
+       
+    uint32_t tabuListSize = 1000;
+    uint32_t timeLimit = 3;
+
+    double initT = 10.0; 
+    double alpha = 0.9;
+    unsigned span = 100; 
+    double finalT = 0.01;
+
+    eoRealVectorBounds& temp = boundsParam.value();
+    eoRealVectorBounds bounds;
+    bounds.resize(temp.size());
+    for(int i=0;i<temp.size();i++) 
+      bounds[i] = temp[i];
+
+    // random seed 
+    rng.reseed(seed);
+
+    // initalSolution
+    //EORVT initialSolution; 
+
+    vector<double> lowBounds,uppBounds; 
+    Utilities::getBounds(bounds,lowBounds,uppBounds);
+    
+    // @todo check if type is TabuSearch, does not work for TS 
+    if(typeid(LocalSearch) == typeid(TabuSearch)) {
+      manager = (BaseLocalSearchManager<LocalSearch,eoObjFunc> *) new LocalSearchManagerTS<eoObjFunc>(lowBounds,uppBounds,numNeighbors,boundaryRadius,maxiter);
+      timeLimit = processFlag<uint32_t>(timeLimit, "timeLimit", "time limit", 'T',false,TSMENU);
+      tabuListSize = processFlag<uint32_t>(tabuListSize, "tabuListSize", "tabu list size", 'L',false,TSMENU);
+      ((LocalSearchManagerTS<eoObjFunc>*) manager)->setTimeLimit(timeLimit);
+      ((LocalSearchManagerTS<eoObjFunc>*) manager)->setTabuListSize(tabuListSize);
+    } 
+    else if(typeid(LocalSearch) == typeid(SimulatedAnnealing)) {
+      manager = (BaseLocalSearchManager<LocalSearch,eoObjFunc> *) new LocalSearchManagerSA<eoObjFunc>(lowBounds,uppBounds,numNeighbors,boundaryRadius,maxiter);
+      initT = processFlag<double>(initT, "initTemp", "initial temperature", 'I',false,SAMENU);
+      alpha = processFlag<double>(alpha, "alpha", "factor of decreasing for cooling schedule", 'A',false,SAMENU);
+      span = processFlag<unsigned>(span, "span", "number of iteration with equal temperature", 'S',false,SAMENU);
+      finalT = processFlag<double>(finalT, "finalTemp", "final temperature", 'F',false,SAMENU);
+      ((LocalSearchManagerSA<eoObjFunc>*) manager)->setInitTemp(initT);
+      ((LocalSearchManagerSA<eoObjFunc>*) manager)->setAlpha(alpha);
+      ((LocalSearchManagerSA<eoObjFunc>*) manager)->setSpan(span);
+      ((LocalSearchManagerSA<eoObjFunc>*) manager)->setFinalTemp(finalT);
+    }
+    else {
+      manager = new LocalSearchManager<LocalSearch,eoObjFunc>(lowBounds,uppBounds,numNeighbors,boundaryRadius);
+    }
     
     if (parser.userNeedsHelp()) {
       parser.printHelp(cout);
@@ -186,40 +236,16 @@ template<class LocalSearch, class eoObjFunc>
       ofstream os(statusParam.c_str());
       os << parser;// and you can use that file as parameter file
     }
+    
+    cout << "Initial solution : \n"; 
+    EORVT solution = manager->getSolution(); 
+    solution.printOn(cout);
 
     if(execute) {
-      
-      eoRealVectorBounds& temp = boundsParam.value();
-      eoRealVectorBounds bounds;
-      bounds.resize(temp.size());
-      for(int i=0;i<temp.size();i++) 
-	bounds[i] = temp[i];
-
-      // random seed 
-      rng.reseed(seed);
-
-      // initalSolution
-      EORVT initialSolution; 
-
-      vector<double> lowBounds,uppBounds; 
-      Utilities::getBounds(bounds,lowBounds,uppBounds);
-      Utilities::getRandomSolution(initialSolution,lowBounds,uppBounds);    
-      cout << "Initial solution : \n"; 
-      initialSolution.printOn(cout);
-   
-      // @todo check if type is TabuSearch, does not work for TS 
-      if(typeid(LocalSearch) == typeid(TabuSearch)) {
-	manager = (BaseLocalSearchManager<LocalSearch,eoObjFunc> *) new LocalSearchManagerTS<eoObjFunc>(initialSolution,numNeighbors,boundaryRadius);
-      }
-      else {
-	manager = new LocalSearchManager<LocalSearch,eoObjFunc>(initialSolution,numNeighbors,boundaryRadius);
-      }
-
-      manager->init();
+      manager->init(maxeval);
       manager->run();
       manager->printOn();
     } 
-
   }
   
 };

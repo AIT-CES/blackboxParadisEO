@@ -32,16 +32,18 @@ LDLIBS=-L$(PARADISEOHOME)/build/lib/
 LDFLAGS=$(LDLIBS) -leoutils -leo
 
 ##Executables
-EXE=main.exe
-EXEDBG=main$(DBGPH).exe
+EXE=HalloGA.exe
+EXEDBG=HalloHA$(DBGPH).exe
 
 ## Object files and src codes 
-SRC=main_basicmenu.cpp
+SRC=halloGA.cpp
 OBJECTS=${SRC:.cpp=.o}
 OBJECTSDBG=${SRC:.cpp=.o}
 
+
 ## Compile Targets  
 build:$(EXE)
+
 
 builddbg:$(EXEDBG)
 

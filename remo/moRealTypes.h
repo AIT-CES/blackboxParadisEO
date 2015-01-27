@@ -95,7 +95,8 @@ typedef moFullEvalByModif<Neighbor> NeighborEval;
 #include "algo/moNeutralHC.h"     // does not work ?!
 // headers for further algorithms 
 #include "algo/moSA.h"
-#include "algo/moTS.h"
+//#include "algo/moTS.h"
+#include "src/algo/moTSUnified.h" 
 #include "algo/moRandomNeutralWalk.h" // does not improve fitness
 #include "algo/moMetropolisHasting.h" // does not improve fitness 
 
@@ -106,7 +107,8 @@ typedef moFirstImprHC<Neighbor> FirstImprHillClimbing;
 /** Simulated Annealing*/
 typedef moSA<Neighbor>          SimulatedAnnealing;
 /** Tabu Search*/ 
-typedef moTS<Neighbor>          TabuSearch;
+//typedef moTS<Neighbor>          TabuSearch;
+typedef moTSUnified<Neighbor>   TabuSearch;
 
 
 /********************************************************

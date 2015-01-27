@@ -32,6 +32,7 @@
  */ 
 class Rosenbrock : public RSRRMVOF {
 
+protected:
   virtual double eval(const std::vector<double>& _arg) {
     double sum = 0.0; 
     for(unsigned i=0;i<_arg.size()-1;i++) {

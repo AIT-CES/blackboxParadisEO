@@ -3,7 +3,7 @@ PRE=time
 PARADISEOVER=2.0.1
 PARADISEOHOME=/usr/local/include/paradiseo
 PARADISEOHOME=/cygdrive/d/work/software/paradiseo
-MYPARADISEO=/cygdrive/d/work/software/myparadiseo/
+MYPARADISEO=/cygdrive/d/work/blackboxParadisEO
 DBGPH=-dbg
 
 help:

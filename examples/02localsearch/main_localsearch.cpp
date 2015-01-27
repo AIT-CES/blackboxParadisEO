@@ -15,7 +15,7 @@
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public License
-    along with Foobar.  If not, see <http://www.gnu.org/licenses/>
+    along with blackboxParadisEO.  If not, see <http://www.gnu.org/licenses/>
 */ 
 
 /**
@@ -39,15 +39,15 @@ using namespace std;
 #include "remo/src/algo/localSearchManager.h"
 
 // objective functions 
-//#include "objfunc/simple/SimpleObj.h"
+#include "objfunc/simple/SimpleObj.h"
 //#include "objfunc/griewank/Griewank.h"
 //#include "objfunc/rastrigin/Rastrigin.h"
-#include "objfunc/rosenbrock/Rosenbrock.h"
+//#include "objfunc/rosenbrock/Rosenbrock.h"
 
-//typedef SimpleObj ObjFunc;
+typedef SimpleObj ObjFunc;
 //typedef Griewank ObjFunc;
 //typedef Rastrigin ObjFunc;
-typedef Rosenbrock ObjFunc;
+//typedef Rosenbrock ObjFunc;
 
 // include for solution initialization
 #include "util/Utilities.h"
@@ -79,7 +79,7 @@ void main_function(int argc, char **argv)
    * ========================================================= */
  
     LocalSearchManager<SimpleHillClimbing,ObjFunc> simpleHC(initialSolution); 
-    simpleHC.init(20000);
+    simpleHC.init(200000);
     simpleHC.run();
     simpleHC.printOn();
 
@@ -104,6 +104,14 @@ void main_function(int argc, char **argv)
     SA.init();
     SA.run();
     SA.printOn();
+
+    // OR 
+
+    LocalSearchManagerSA<ObjFunc> SA2(initialSolution); 
+    SA2.init(100000);
+    SA2.run();
+    SA2.printOn();
+
    
     /* =========================================================
      *
@@ -111,11 +119,21 @@ void main_function(int argc, char **argv)
      *
      * ========================================================= */
    
-    LocalSearchManagerTS<ObjFunc> TS(initialSolution,10000);
+
+    LocalSearchManagerTS<ObjFunc> TS(initialSolution,50,0.1,10000);
+    TS.setTimeLimit(1);
+    TS.setTabuListSize(100);
     TS.init();
     TS.run();
     TS.printOn();
    
+    /// OR 
+
+    LocalSearchManager<TabuSearch,ObjFunc> TS2(initialSolution); 
+    TS2.init(2000000);
+    TS2.run();
+    TS2.printOn();
+
 }
 
 

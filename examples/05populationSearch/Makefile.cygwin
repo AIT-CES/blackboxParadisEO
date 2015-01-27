@@ -36,12 +36,14 @@ EXE=main.exe
 EXEDBG=main$(DBGPH).exe
 
 ## Object files and src codes 
-SRC=main_basicmenu.cpp
+SRC=main_population.cpp
 OBJECTS=${SRC:.cpp=.o}
 OBJECTSDBG=${SRC:.cpp=.o}
 
+
 ## Compile Targets  
 build:$(EXE)
+
 
 builddbg:$(EXEDBG)
 

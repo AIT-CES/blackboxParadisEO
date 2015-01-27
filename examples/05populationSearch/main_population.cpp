@@ -19,15 +19,14 @@
 */ 
 
 /**
- * \file  main_basicmenu.cpp
+ * \file  main_population.cpp
  *  
- * Main driver for testing local search heuristics using simple menus 
+ * Main driver for testing population-based search 
  * 
  * @author: Atiyah Elsheikh
- * @date: Sep. 2014
- * @last changes: Oct. 2014
+ * @date: Jan. 2015
+ * @last changes: Jan. 2015
  */ 
-
 
 // declaration of the namespace
 using namespace std;
@@ -37,11 +36,10 @@ using namespace std;
 
 // include for NLP
 #include "remo/moRealTypes.h"
-#include "remo/src/algo/LocalSearchManager.h"
-#include "remo/src/algo/localSearchBasicMenu.h"
+#include "reeo/src/algo/PopulationSearchManager.h"
 
 // objective functions 
-//#include "objfunc/simple/SimpleObj.h"
+#include "objfunc/simple/SimpleObj.h"
 //#include "objfunc/griewank/Griewank.h"
 //#include "objfunc/rastrigin/Rastrigin.h"
 #include "objfunc/rosenbrock/Rosenbrock.h"
@@ -51,18 +49,54 @@ using namespace std;
 //typedef Rastrigin ObjFunc;
 typedef Rosenbrock ObjFunc;
 
+// include for solution initialization
+#include "util/Utilities.h"
 
 void main_function(int argc, char **argv)
 {
-
+  vector<double> lowBound(10,-100);
+  vector<double> uppBound(10,100);
+  unsigned int seed = time(0); 
+  PopulationSearchManagerSGA<ObjFunc> gamanager(lowBound,uppBound,50,100000,seed,0.8,0.5);
   
-  // LocalSearchBasicMenu<SimpleHillClimbing,ObjFunc> menu(argc,argv);
-  // LocalSearchBasicMenu<FirstImprHillClimbing,ObjFunc> menu2(argc,argv);
-  LocalSearchBasicMenu<SimulatedAnnealing,ObjFunc> menu3(argc,argv);
-  // LocalSearchBasicMenu<TabuSearch,ObjFunc> menu4(argc,argv); //does not work at the moment
+  gamanager.setSteadySC(10,50);
+  gamanager.setSegmentCrossover(1.0);
+  gamanager.setHypercubeCrossover(1.0);
+
+  gamanager.setUniformMutation(0.01,0.5);
+  gamanager.setDetUniformMutation(0.1,0.5);
+  gamanager.setNormalMutation(1,0.5);
+  gamanager.setNormalMutation(0.1,0.5);
+  gamanager.setNormalMutation(0.01,0.5);
+  
+  //gamanager.setTournamentSelect(); // default 
+  //gamanager.setProportionalSelect(); 
+  //gamanager.setStochTournamentSelect(0.99);
+  //gamanager.setRandomSelect();
+  gamanager.init(3);
+  gamanager.run();
+
+
+  PopulationSearchManagerEA<ObjFunc> eamanager(lowBound,uppBound,50,100000,seed,0.8,0.5);
+  
+  eamanager.setSteadySC(10,50);
+  eamanager.setSegmentCrossover(1.0);
+  eamanager.setHypercubeCrossover(1.0);
+
+  eamanager.setUniformMutation(0.01,0.5);
+  eamanager.setDetUniformMutation(0.1,0.5);
+  eamanager.setNormalMutation(1,0.5);
+  eamanager.setNormalMutation(0.1,0.5);
+  eamanager.setNormalMutation(0.01,0.5);
+  
+  //eamanager.setTournamentSelect(); // default 
+  //eamanager.setProportionalSelect(); 
+  //eamanager.setStochTournamentSelect(0.99);
+  //eamanager.setRandomSelect();
+  eamanager.init(3);
+  eamanager.run();
 
 }
-
 
 // A main that catches the exceptions
 int main(int argc, char **argv)
@@ -75,3 +109,4 @@ int main(int argc, char **argv)
     }
     return 1;
 }
+
