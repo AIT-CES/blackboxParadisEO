@@ -195,7 +195,7 @@ template<class eoObjFunc>
 			    float _MUT_RATE = 0.5) 
     : BasePopulationSearchManager<eoObjFunc>(_lowerBound,_upperBound,
 					     _POP_SIZE,_MAX_GEN,_SEED),
-    CROSS_RATE(_CROSS_RATE),MUT_RATE(_MUT_RATE),genCont(_MAX_GEN),continuator(genCont)
+    CROSS_RATE(_CROSS_RATE),MUT_RATE(_MUT_RATE),genCont(_MAX_GEN),continuator(genCont),maxEval(0)
     // checkpoint(0),counter(0),increment(counter),monitor(false) 
     {  }
   
@@ -213,7 +213,7 @@ template<class eoObjFunc>
 			   float _CROSS_RATE=0.8,
 			   float _MUT_RATE = 0.5) 
    : BasePopulationSearchManager<eoObjFunc>(_pop,_MAX_GEN),
-    CROSS_RATE(_CROSS_RATE),MUT_RATE(_MUT_RATE),genCont(_MAX_GEN),continuator(genCont)
+    CROSS_RATE(_CROSS_RATE),MUT_RATE(_MUT_RATE),genCont(_MAX_GEN),continuator(genCont),maxEval(0)
     // checkpoint(0),counter(0),increment(counter),monitor(false) 
   {  }
 
@@ -223,6 +223,7 @@ template<class eoObjFunc>
     try {
       //delete checkpoint;
       delete steadyCont;
+      delete maxEval;
     }
     catch (int e) {
       std::cerr << "exception at Destructor of BasePopulationSearchManager : Nr. " << e << std::endl;
@@ -249,8 +250,8 @@ template<class eoObjFunc>
    */ 
   void setMaxFuncEval(unsigned int _maxeval) {
     if(this->INITIALIZED) std::cerr << "setMaxFuncEval::object already initialized\n";
-    eoEvalContinue<EORVT> max(this->eval,_maxeval);
-    continuator.add(max);
+    maxEval = new eoEvalContinue<EORVT>(this->eval,_maxeval);
+    continuator.add(*maxEval);
   }
 
   /**
@@ -276,7 +277,8 @@ template<class eoObjFunc>
   eoGenContinue<EORVT> genCont;           ///> stopping criteria 
   eoCombinedContinue<EORVT> continuator;  ///> stopping criteria 
   eoSteadyFitContinue<EORVT>* steadyCont; ///> stopping criteria
-
+  eoEvalContinue<EORVT>* maxEval;         ///> Stopping criteria max. function evaluations
+  
   /*eoCheckPoint<EORVT>* checkpoint;
   unsigned int counter;
   eoIncrementor<unsigned> increment; 
