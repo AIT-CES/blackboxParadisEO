@@ -9,6 +9,7 @@ help:
 	@echo ""
 	@echo "	build:		build exe without debuging"
 	@echo "	run:		run"
+	@echo "	rerun:		rerun with main.exe.status file"
 	@echo "	clean:		clean all objects"
 	@echo ""
 
@@ -52,7 +53,10 @@ $(EXEDBG):$(OBJECTSDBG)
 	$(CC) -c $(CFLAGS) $(OPTFLAGS) $(INC) $<
 
 run:
-	$(EXE) @main.exe.status
+	./$(EXE)
+
+rerun:
+	./$(EXE) @main.exe.status
 
 depend:
 	makedepend -- $(SRC)
