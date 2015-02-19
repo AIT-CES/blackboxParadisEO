@@ -9,6 +9,7 @@ help:
 	@echo ""
 	@echo "	build:		build exe without debuging"
 	@echo "	run:		run"
+	@echo "	rerun:		run with the file main.status"
 	@echo "	clean:		clean all objects"
 	@echo ""
 
@@ -51,8 +52,11 @@ $(EXEDBG):$(OBJECTSDBG)
 .cpp.o:
 	$(CC) -c -DMINGW -DWIN32 $(CFLAGS) $(OPTFLAGS) $(INC) $<
 
-# run:
-#	$(EXE) @main.status
+run:
+	./$(EXE)
+
+rerun:
+	./$(EXE) @main.status
 
 clean:
 	rm -f *.exe *.o
