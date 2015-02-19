@@ -55,7 +55,6 @@ typedef Rosenbrock ObjFunc;
 void main_function(int argc, char **argv)
 {
 
-  
   // LocalSearchBasicMenu<SimpleHillClimbing,ObjFunc> menu(argc,argv);
   // LocalSearchBasicMenu<FirstImprHillClimbing,ObjFunc> menu2(argc,argv);
   LocalSearchBasicMenu<SimulatedAnnealing,ObjFunc> menu3(argc,argv);
