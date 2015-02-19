@@ -1,0 +1,72 @@
+CC=g++
+PARADISEOHOME=/c/work/software/paradiseo-master
+MYPARADISEO=/c/work/blackboxParadisEO/
+FMUHOME=$(MYPARADISEO)/objfunc/simplefmu
+FMIPPHOME=/c/work/fmipp/
+OMCHOME=/c/OpenModelica1.9.2Beta
+MODELID=Simple
+MODELBIN=$(FMUHOME)/$(MODELID)/binaries/win32
+DBGPH=-dbg
+
+help:
+	@echo "Targets"
+	@echo "======="
+	@echo ""
+	@echo "	build:		build exe without debuging"
+	@echo "	run:		run"
+	@echo "	clean:		clean all objects"
+	@echo ""
+
+
+##Compiler Flags 
+DBFLAGS=-g 
+MACROS=-DBUILD_FMI_DLL -DMINGW -DWIN32
+MACROS=-D__NO_INLINE__
+MACROS=
+DBGMACROS=-DDEBUG
+CFLAGS=-std=c++11 $(MACROS)
+OPTFLAGS=-O
+OPTFLAGS=
+
+INCEO=$(PARADISEOHOME)/eo/src
+INCMO=$(PARADISEOHOME)/mo/src 
+INC=-I. -I$(INCEO) -I$(INCMO) -I$(MYPARADISEO) -I$(FMIPPHOME)
+
+LDLIBS=-L$(PARADISEOHOME)/build/lib/ -L$(FMIPPHOME)/build -L$(MODELBIN)
+LDFLAGS=$(LDLIBS) -leoutils -leo -l$(MODELID) -lfmippim  -lfmippex
+
+##Executables
+EXE=main.exe
+EXEDBG=main$(DBGPH).exe
+
+## Object files and src codes 
+SRC=main_simplefmu.cpp
+OBJECTS=${SRC:.cpp=.o}
+OBJECTSDBG=${SRC:.cpp=.o}
+
+## Compile Targets  
+build:$(EXE)
+
+builddbg:$(EXEDBG)
+
+$(EXE):$(OBJECTS)
+	$(CC) -o $(EXE) $(OBJECTS) $(LDFLAGS) 
+
+$(EXEDBG):$(OBJECTSDBG)
+	$(CC) -o $(EXE) $(OBJECTSDBG) $(LDFLAGS) 
+
+#Objects
+.cpp.o:
+	$(CC) -c $(CFLAGS) $(OPTFLAGS) $(INC) $<
+
+run:
+	PATH="$(PATH):$(FMIPPHOME)/build:$(MODELBIN)" $(EXE)
+
+rerun:
+	PATH="$(PATH):$(FMIPPHOME)/build:$(MODELBIN)"  $(EXE) @main.exe.status
+
+depend:
+	makedepend -- $(SRC)
+
+clean:
+	rm -f *.exe *.o
