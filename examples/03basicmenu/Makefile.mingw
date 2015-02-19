@@ -56,7 +56,7 @@ run:
 	./$(EXE)
 
 rerun:
-	./$(EXE) @main.status
+	./$(EXE) @$(EXE).status
 
 clean:
 	rm -f *.exe *.o
