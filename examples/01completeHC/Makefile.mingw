@@ -1,0 +1,65 @@
+CC=g++
+
+PARADISEOHOME=/c/work/software/paradiseo
+MYPARADISEO=/c/work/blackboxParadisEO/
+DBGPH=-dbg
+
+help:
+	@echo "Targets"
+	@echo "======="
+	@echo ""
+	@echo "	build:		build exe without debuging"
+	@echo "	run:		run"
+	@echo "	clean:		clean all objects"
+	@echo ""
+
+
+##Compiler Flags 
+DBFLAGS=-g 
+MACROS=
+DBGMACROS=-DDEBUG
+CFLAGS=
+OPTFLAGS=-O
+
+
+INCEO=$(PARADISEOHOME)/include/eo
+INCMO=$(PARADISEOHOME)/include/mo 
+INC=-I. -I$(INCEO) -I$(INCMO) -I$(MYPARADISEO)
+
+LDLIBS=-L$(PARADISEOHOME)/lib32/
+LDFLAGS=$(LDLIBS) -leoutils -leo
+
+##Executables
+EXE=SimpleRealHC.exe
+EXEDBG=SimpleRealHC$(DBGPH).exe
+
+## Object files and src codes 
+SRC=main_simpleRealHC.cpp
+OBJECTS=${SRC:.cpp=.o}
+OBJECTSDBG=${SRC:.cpp=.o}
+
+
+## Compile Targets  
+build:$(EXE)
+
+
+builddbg:$(EXEDBG)
+
+$(EXE):$(OBJECTS)
+	$(CC) -o $(EXE) $(OBJECTS) $(LDFLAGS) 
+
+$(EXEDBG):$(OBJECTSDBG)
+	$(CC) -o $(EXE) $(OBJECTSDBG) $(LDFLAGS) 
+
+#Objects
+.cpp.o:
+	$(CC) -c $(CFLAGS) $(OPTFLAGS) $(INC) $<
+
+run:
+	./$(EXE)
+
+depend:
+	makedepend -- $(SRC)
+
+clean:
+	rm -f *.exe *.o
