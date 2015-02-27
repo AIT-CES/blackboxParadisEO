@@ -16,16 +16,16 @@
 
     You should have received a copy of the GNU Lesser General Public License
     along with blackboxParadisEO.  If not, see <http://www.gnu.org/licenses/>
-*/ 
+*/
 
 /**
  * \file  main_basicmenu.cpp
  *  
- * Main driver for testing local search heuristics using simple menus 
+ * Main driver for testing evolutionary optimization strategy using simple menus 
  * 
  * @author: Atiyah Elsheikh
- * @date: Sep. 2014
- * @last changes: Oct. 2014
+ * @date: Jan. 2015
+ * @last changes: Jan. 2015
  */ 
 
 
@@ -37,8 +37,8 @@ using namespace std;
 
 // include for NLP
 #include "remo/moRealTypes.h"
-#include "remo/src/algo/LocalSearchManager.h"
-#include "remo/src/algo/localSearchBasicMenu.h"
+#include "reeo/src/algo/PopulationSearchManager.h"
+#include "reeo/src/algo/PopulationSearchBasicMenu.h"
 
 // objective functions 
 //#include "objfunc/simple/SimpleObj.h"
@@ -55,10 +55,7 @@ typedef Rosenbrock ObjFunc;
 void main_function(int argc, char **argv)
 {
 
-  // LocalSearchBasicMenu<SimpleHillClimbing,ObjFunc> menu(argc,argv);
-  // LocalSearchBasicMenu<FirstImprHillClimbing,ObjFunc> menu2(argc,argv);
-  LocalSearchBasicMenu<SimulatedAnnealing,ObjFunc> menu3(argc,argv);
-  // LocalSearchBasicMenu<TabuSearch,ObjFunc> menu4(argc,argv); //does not work at the moment
+  PopulationSearchBasicMenu<ObjFunc>  menu(argc,argv);
 
 }
 

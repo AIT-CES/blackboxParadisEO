@@ -54,10 +54,34 @@ template<class EOT,class Fitness = typename EOT::Fitness, class FuncArg = const 
 class eoObjFunc : public eoEvalFunc<EOT> {
 
 public:
+
+  /**
+   * Cor
+   */ 
+  eoObjFunc():INITIALIZED(false) {}
+
+  /** 
+   * evaluation
+   * @param _eo argument
+   */ 
   virtual void operator()(EOT& _eo) = 0;
 
-protected:
-  virtual Fitness eval(FuncArg) = 0; 
+  /** 
+   * initialize 
+   */ 
+  virtual void init()=0;
+
+  /**
+   * whether obj function is initialized  
+   */ 
+  virtual bool isInitialized() {
+    return INITIALIZED;
+  }
+
+ protected:
+  virtual Fitness eval(FuncArg) = 0;
+
+  bool INITIALIZED;
 
 };  
 
@@ -74,6 +98,10 @@ public:
     const std::vector<double>& v = (std::vector<double>)( _eo);
     _eo.fitness(this->eval(v));
   };
+
+  virtual void init() {
+    INITIALIZED = true;
+  }
 
 protected:
   //virtual double eval(const std::vector<double>& arg) = 0; 

@@ -16,18 +16,17 @@
 
     You should have received a copy of the GNU Lesser General Public License
     along with blackboxParadisEO.  If not, see <http://www.gnu.org/licenses/>
-*/ 
+*/
 
 /**
- * \file  main_basicmenu.cpp
+ * \file  main_simplefmu.cpp
  *  
- * Main driver for testing local search heuristics using simple menus 
+ * Main driver for testing optimization strategy using simple menus 
  * 
  * @author: Atiyah Elsheikh
- * @date: Sep. 2014
- * @last changes: Oct. 2014
+ * @date: Feb. 2015
+ * @last changes: Feb. 2015
  */ 
-
 
 // declaration of the namespace
 using namespace std;
@@ -37,24 +36,16 @@ using namespace std;
 
 // include for NLP
 #include "remo/moRealTypes.h"
+#include "objfunc/simplefmu/SimpleFMU.h"
 #include "remo/src/algo/LocalSearchManager.h"
 #include "remo/src/algo/localSearchBasicMenu.h"
-
-// objective functions 
-//#include "objfunc/simple/SimpleObj.h"
-//#include "objfunc/griewank/Griewank.h"
-//#include "objfunc/rastrigin/Rastrigin.h"
-#include "objfunc/rosenbrock/Rosenbrock.h"
-
-//typedef SimpleObj ObjFunc;
-//typedef Griewank ObjFunc;
-//typedef Rastrigin ObjFunc;
-typedef Rosenbrock ObjFunc;
+typedef SimpleFMU  ObjFunc;
 
 
 void main_function(int argc, char **argv)
 {
 
+  
   // LocalSearchBasicMenu<SimpleHillClimbing,ObjFunc> menu(argc,argv);
   // LocalSearchBasicMenu<FirstImprHillClimbing,ObjFunc> menu2(argc,argv);
   LocalSearchBasicMenu<SimulatedAnnealing,ObjFunc> menu3(argc,argv);

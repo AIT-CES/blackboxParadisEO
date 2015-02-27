@@ -1,5 +1,5 @@
 /**
-    Copyright (C) Atiyah Elsheikh (Atiyah.Elsheikh@ait.ac.at,a.m.g.Elsheikh@gmail.com) 2014, 
+    Copyright (C) Atiyah Elsheikh (Atiyah.Elsheikh@ait.ac.at,a.m.g.Elsheikh@gmail.com) 2014,2015 
     AIT Austrian Institute of Technology GmbH
 
     This file is part of the software blackboxParadisEO
@@ -93,7 +93,15 @@ void main_function(int argc, char **argv)
   //eamanager.setProportionalSelect(); 
   //eamanager.setStochTournamentSelect(0.99);
   //eamanager.setRandomSelect();
-  eamanager.init(3);
+  eamanager.setCommaReplacement();
+  //eamanager.setPlusReplacement();
+  //eamanager.setEPReplacement(5);
+  // eamanager.setSSGAWorseReplacement();
+  //eamanager.setSSGADetTournamentReplacement(5);
+  //eamanager.setSSGAStochTournamentReplacement(0.5);
+  // eamanager.setSurviveAndDieReplacement(0.5,0.5);
+   
+  eamanager.init(3,1.0);
   eamanager.run();
 
 }
